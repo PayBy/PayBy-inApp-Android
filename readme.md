@@ -1,5 +1,2 @@
-# 我的
-## 他的
-###  你的 
-### 方式
-> 这是引用的
+# PayBy-inApp-Android
+PayBy Payment Gateway integration SDK for android with In-app pay scenes

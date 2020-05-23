@@ -5,6 +5,20 @@ buildscript {
     repositories {
         google()
         jcenter()
+        maven {
+            credentials {
+                username 'dev'
+                password 'dev@123'
+            }
+            url("http://nexus.payby.com/repository/android-release/")
+        }
+        maven {
+            credentials {
+                username 'snapshot'
+                password 'snapshot'
+            }
+            url("http://nexus.payby.com/repository/android-snapshot/")
+        }
         
     }
     dependencies {
@@ -20,6 +34,20 @@ allprojects {
     repositories {
         google()
         jcenter()
+        maven {
+            credentials {
+                username 'dev'
+                password 'dev@123'
+            }
+            url("http://nexus.payby.com/repository/android-release/")
+        }
+        maven {
+            credentials {
+                username 'snapshot'
+                password 'snapshot'
+            }
+            url("http://nexus.payby.com/repository/android-snapshot/")
+        }
         
     }
 }
