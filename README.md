@@ -106,7 +106,7 @@ public class MainActivity extends AppCompatActivity implements OnPayResultListen
   private String mPartnerId;  //partnerId
   private String mSign;
   private String mIapDeviceId;
-  private boolean isDev = true; //生产环境还是开发环境
+  private boolean isDev = true; //What's the environment?Sim environment fill in true, product environment fill in false.
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
