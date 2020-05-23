@@ -12,6 +12,9 @@ android {
         versionName "1.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        manifestPlaceholders=[
+                PACKAGENAME:"com.payby.android.payment.iap.sample"
+        ]
     }
 
     buildTypes {
