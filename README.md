@@ -107,6 +107,7 @@ public class MainActivity extends AppCompatActivity implements OnPayResultListen
   private String mPartnerId;  //partnerId
   private String mSign;
   private String mIapDeviceId;
+  private String mIapAppId;
   private boolean isDev = true; //What's the environment?Sim environment fill in true, product environment fill in false.
 
   @Override
