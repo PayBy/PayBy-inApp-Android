@@ -96,10 +96,10 @@ the second parameter is dev environment or pro environment,default is dev
 ```
 manager.onPayResultListener = this;
 ```
-#Sample
+# Sample
 ```
 public class MainActivity extends AppCompatActivity implements OnPayResultListener {
-  EditText et_sign, et_token, et_id, et_deviceId;
+  EditText et_sign, et_token, et_id, et_deviceId,et_app_id;
   Button pay;
   private PbManager manager;
   private String mToken;  //tokenUrl   
@@ -117,6 +117,7 @@ public class MainActivity extends AppCompatActivity implements OnPayResultListen
     et_token = findViewById(R.id.et_token);
     et_id = findViewById(R.id.et_id);
     et_deviceId = findViewById(R.id.et_deviceId);
+    et_app_id = findViewById(R.id.et_app_id);
 
     //Step1:create PbManager
     manager = PbManager.getInstance(this);
@@ -144,14 +145,16 @@ public class MainActivity extends AppCompatActivity implements OnPayResultListen
     mPartnerId = et_id.getText().toString().trim();
     mIapDeviceId = et_deviceId.getText().toString().trim();
     mSign = et_sign.getText().toString().trim();
+    mAppId = et_app_id.getText().toString().trim();
     if (TextUtils.isEmpty(mToken)
         || TextUtils.isEmpty(mPartnerId)
         || TextUtils.isEmpty(mIapDeviceId)
-        || TextUtils.isEmpty(mSign)) {
+        || TextUtils.isEmpty(mSign)
+        || TextUtils.isEmpty(mAppId)) {
       Toast.makeText(this, "parameter should not be null", Toast.LENGTH_SHORT).show();
       return;
     }
-    PayTask task = PayTask.with(mToken, mIapDeviceId, mPartnerId, mSign);
+    PayTask task = PayTask.with(mToken, mIapDeviceId, mPartnerId, mSign, mAppId);
     manager.pay(task, isDev);
   }
 
