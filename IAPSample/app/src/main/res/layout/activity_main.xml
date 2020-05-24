@@ -12,7 +12,14 @@
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:layout_marginTop="20dp"
-        android:hint="partnerId"
+        android:hint="PartnerId"
+        android:visibility="visible" />
+    <EditText
+        android:id="@+id/et_app_id"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_marginTop="20dp"
+        android:hint="IAPAppId"
         android:visibility="visible" />
 
     <EditText
@@ -20,7 +27,7 @@
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:layout_marginTop="20dp"
-        android:hint="iapDeviceId"
+        android:hint="IAPDeviceId"
         android:visibility="visible" />
 
     <EditText
@@ -28,13 +35,13 @@
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:layout_marginTop="20dp"
-        android:hint="token" />
+        android:hint="Order Token" />
 
     <EditText
         android:id="@+id/et_sign"
         android:layout_width="match_parent"
         android:layout_height="50dp"
-        android:hint="iapSign"
+        android:hint="IAPSign"
         android:visibility="visible" />
 
     <Button
