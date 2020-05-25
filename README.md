@@ -105,7 +105,7 @@ public class MainActivity extends AppCompatActivity implements OnPayResultListen
   private String mSign;
   private String mIapDeviceId;
   private String mIapAppId;
-  private boolean isTest = true; //What's the environment?Sim environment fill in true, product environment fill in false.
+  private boolean isTest = true;// true means for testing environment,false means for production environment
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
