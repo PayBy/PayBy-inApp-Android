@@ -1,11 +1,11 @@
 # PayBy-inApp-Android
 PayBy Payment Gateway integration SDK for android with In-app pay scenes
 ## 术语说明
-IAPDeviceId：用于区分不同设备的唯一标识
-IAPPartnerId：商户申请支付服务时候被分配的商户id，用以区分不同商户
-IAPAppId：商户申请支付服务时候被分配的appId,用以区分商户下不同APP
-OrderToken：包含订单信息的token
-IAPSign：通过对IAPDeviceId、IAPPartnerId、IAPAppId、OrderToken加密生成的签名信息
+- IAPDeviceId：用于区分不同设备的唯一标识
+- IAPPartnerId：商户申请支付服务时候被分配的商户id，用以区分不同商户
+- IAPAppId：商户申请支付服务时候被分配的appId,用以区分商户下不同APP
+- OrderToken：包含订单信息的token
+- IAPSign：通过对IAPDeviceId、IAPPartnerId、IAPAppId、OrderToken加密生成的签名信息
 ## 添加依赖
 通过配置gradle添加依赖库,同时添加包名占位符,用于操作文件下载路径.
 #### 步骤1:添加maven地址
@@ -83,6 +83,7 @@ android{
 </manifest>
 ```
 # 参数准备
+支付参数说明及获取方式如下:
 | 名称| 说明 | 如何获取 |
 |:-:|:-:|:-:|
 |iapDeviceId|设备唯一标识|通过SDK中PbManager对象获取|
@@ -90,7 +91,7 @@ android{
 |token|订单token|创建订单之后由服务端生成|
 |iapAppId| appId|商户申请服务时候被分配的AppId|
 |iapSign|对iapDeviceId,iapPartnerId,token,iapAppId加签之后的签名信息|根据加签规则对签名字符串进行签名而生成的信息,签名字符串加签顺序具体如下|
-String signString ="iapAppId="+iapAppId+ "&iapDeviceId=" + iapDeviceId+ "&iapPartnerId=" + iapPartnerId+"&token=" + token ;
+- String signString ="iapAppId="+iapAppId+ "&iapDeviceId=" + iapDeviceId+ "&iapPartnerId=" + iapPartnerId+"&token=" + token ;
 # 如何使用
 #### 步骤1:生成IAPDeviceId
 ```
@@ -135,14 +136,18 @@ public class MainActivity extends AppCompatActivity implements OnPayResultListen
     et_id = findViewById(R.id.et_id);
     et_deviceId = findViewById(R.id.et_deviceId);
     et_app_id = findViewById(R.id.et_app_id);
-
+    
+    // Step1:获取PbManager对象
     manager = PbManager.getInstance(this);
+    // Step2:获取iapDeviceId
     String iapDeviceID = manager.getIAPDeviceID();
     et_deviceId.setText(iapDeviceID);
+    // Step3:设置支付结果监听
     manager.onPayResultListener = this;
     pay.setOnClickListener(new View.OnClickListener() {
       @Override
       public void onClick(View v) {
+      // Step4:支付
         startPay();
       }
     });
