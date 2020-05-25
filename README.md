@@ -23,7 +23,7 @@ allprojects {
 def iap_version="1.0.0-RELEASE"
 implementation "com.payby.lego.android.payment:lib-iap-sdk-view-x:${iap_version}"
 ```
-#### Step3: add  manifestPlaceholders .named is "PACKAGENAME",value is applicationId.And support java8
+#### Step3: add  manifestPlaceholders. name is "PACKAGENAME", value is applicationId.Also need support java8
 ```
 android{
     defaultConfig {
@@ -88,7 +88,7 @@ PayTask task = PayTask.with(mToken, mIapDeviceId, mPartnerId, mSign, mIapAppId);
 ```
 manager.pay(task, isTest);    
 ```
-the second parameter is a boolean,that means for testing environment or production environment. default value is true for testing.
+the second parameter is a boolean,that means for testing environment or production environment. default value true is for testing.
 
 #### Step4:set payment result listener
 ```
