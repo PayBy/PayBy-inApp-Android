@@ -136,7 +136,7 @@ PayTask task = PayTask.with(mToken, mIapDeviceId, mPartnerId, mSign, mIapAppId);
 manager.pay(task, isTest);    
 ```
 #### Step5:Get Payment Result
-Let payment page implement **OnPayResultListener** ，and override its method **onGetPayState(String result)**方法，即可以拿到支付结果。
+Let payment page implement **OnPayResultListener** ，and override its method **onGetPayState(String result)**,then you can get the payment result.
 #### Payment Result Code
 - **SUCCESS**:the payee has received the money successfully,and the payment accomplishes.
 - **FAIL**:there is wrong with the payment
