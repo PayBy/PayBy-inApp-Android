@@ -92,7 +92,7 @@ android{
 </manifest>
 ```
 # 参数准备
-支付参数说明及获取方式如下:
+支付参数说明及获取方式如下所示，通过以下参数可以构建 **PayTask** 对象，该对象描述了一个支付任务，通过调用 **PbManager** 里面的 **pay(PayTask task,boolean isTest)** 方法完成支付动作.
 | 名称| 说明 | 如何获取 |
 |:-:|:-:|:-:|
 |iapDeviceId|设备唯一标识|通过SDK中PbManager对象获取|
@@ -103,6 +103,7 @@ android{
 # 如何使用
 #### 步骤1:生成IAPDeviceId
 ```
+// 如果当前界面是Activity，则实例化PbManager对象时候传入this上下文即可；如果是Fragment，则传入getActivity()即可
 PbManager manager = PbManager.getInstance(this);
 String mIapDeviceId= manager.getIAPDeviceID();
 ```
@@ -128,7 +129,7 @@ manager.pay(task, isTest);
 - PAID：付款方付款成功
 - PAYING：正在处理中
 # 示例代码
-集成支付完整示例如下所示:
+以集成AndroidX依赖库为例，完整的支付流程示例代码如下所示:需要注意的是您在实际开发过程中，需要让自己的订单支付界面来实现 **OnPayResultListener** 接口，订单支付界面可以是一个Activity，也可以是一个Fragment。此处以MainActivity作为示例来模拟支付流程.
 ```
 public class MainActivity extends AppCompatActivity implements OnPayResultListener {
   EditText et_sign, et_token, et_id, et_deviceId,et_app_id;
