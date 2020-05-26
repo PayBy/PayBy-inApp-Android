@@ -40,11 +40,20 @@ allprojects {
 ```
 #### 步骤2: 添加依赖库
 在app moudle级别下面的build.gradle中,添加依赖库
+AndroidX:
 ```
 dependencies{
     ...
     def iap_version="1.0.0-RELEASE"
     implementation "com.payby.lego.android.payment:lib-iap-sdk-view-x:${iap_version}"
+}
+```
+or Android Support
+```
+dependencies{
+    ...
+    def iap_version="1.0.0-RELEASE"
+    implementation "com.payby.lego.android.payment:lib-iap-sdk-view-support:${iap_version}"
 }
 ```
 #### 步骤3: 添加placeholder
