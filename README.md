@@ -5,7 +5,7 @@ PayBy Payment Gateway integration SDK for android with In-app pay scenes
 - IAPPartnerId：商户申请支付服务时候被分配的商户id，用以区分不同商户
 - IAPAppId：商户申请支付服务时候被分配的appId,用以区分商户下不同APP
 - OrderToken：包含订单信息的token
-- IAPSign：通过对IAPDeviceId、IAPPartnerId、IAPAppId、OrderToken加密生成的签名信息
+- IAPSign：通过对IAPDeviceId、IAPPartnerId、IAPAppId、OrderToken拼接而成的签名字符串加密生成。拼接字符串规则如下所示：String signString ="iapAppId="+iapAppId+ "&iapDeviceId=" + iapDeviceId+ "&iapPartnerId=" + iapPartnerId+"&token=" + token ;signString的加密规则可见demo
 ## 添加依赖
 通过配置gradle添加依赖库,同时添加包名占位符,用于操作文件下载路径.
 #### 步骤1:添加maven地址
@@ -90,8 +90,7 @@ android{
 |iapPartnerId|商户id|商户申请服务时候被分配的商户id|
 |token|订单token|创建订单之后由服务端生成|
 |iapAppId| appId|商户申请服务时候被分配的AppId|
-|iapSign|对iapDeviceId,iapPartnerId,token,iapAppId加签之后的签名信息|根据加签规则对签名字符串进行签名而生成的信息,签名字符串加签顺序具体如下|
-- String signString ="iapAppId="+iapAppId+ "&iapDeviceId=" + iapDeviceId+ "&iapPartnerId=" + iapPartnerId+"&token=" + token ;
+|iapSign|对iapDeviceId,iapPartnerId,token,iapAppId加签之后的签名信息|根据加签规则对签名字符串进行签名而生成的信息,签名字符串加签顺序及规则具体见术语说明|
 # 如何使用
 #### 步骤1:生成IAPDeviceId
 ```
@@ -101,10 +100,10 @@ String mIapDeviceId= manager.getIAPDeviceID();
 需要注意的是:IAPDeviceId在创建订单以及订单支付的时候需要保持一致.
 
 #### 步骤2:下单
-该步骤需要通过调用自己后台下单接口进行下单
+该步骤需要通过调用自己后台下单接口进行下单，下单成功之后，即可以获取token，iapSign信息.
 #### 步骤3:设置支付结果监听
 ```
-manager.onPayResultListener = this;
+manager.onPayResultListener = this;// 当前Activity注册OnPayResultListener接口回调监听
 ```
 #### 步骤4:支付
 根据之前准备的参数构建一个PayTask对象.需要注意的是,参数的顺序必须按照如下所示:第一个为token,第二个为iapDeviceId...然后通过初始化的PbManager对象调用它的pay方法发起支付.第一个参数是PayTask类型,第二个参数是一个Boolean类型,true表示是测试环境,false表示是生产环境.
@@ -112,6 +111,13 @@ manager.onPayResultListener = this;
 PayTask task = PayTask.with(mToken, mIapDeviceId, mPartnerId, mSign, mIapAppId);
 manager.pay(task, isTest);    
 ```
+#### 步骤5：获取支付结果
+实现 **OnPayResultListener** 接口，重写它的 **onGetPayState(String result)** 方法，即可以拿到支付结果。
+#### 支付结果码说明
+- SUCCESS: 收款方收款成功，整个支付流程结束
+- FAIL：支付失败
+- PAID：付款方付款成功
+- PAYING：正在处理中
 # 示例代码
 集成支付完整示例如下所示:
 ```
@@ -124,7 +130,7 @@ public class MainActivity extends AppCompatActivity implements OnPayResultListen
   private String mSign;
   private String mIapDeviceId;
   private String mIapAppId;
-  private boolean isTest = true; //What's the environment?Sim environment fill in true, product environment fill in false.
+  private boolean isTest = true; 
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -139,21 +145,23 @@ public class MainActivity extends AppCompatActivity implements OnPayResultListen
     
     // Step1:获取PbManager对象
     manager = PbManager.getInstance(this);
+    
     // Step2:获取iapDeviceId
     String iapDeviceID = manager.getIAPDeviceID();
     et_deviceId.setText(iapDeviceID);
+    
     // Step3:设置支付结果监听
     manager.onPayResultListener = this;
     pay.setOnClickListener(new View.OnClickListener() {
       @Override
       public void onClick(View v) {
-      // Step4:支付
         startPay();
       }
     });
 
   }
-
+  
+  // Step4:支付
   private void startPay() {
     mToken = et_token.getText().toString().trim();
     mPartnerId = et_id.getText().toString().trim();
@@ -173,8 +181,20 @@ public class MainActivity extends AppCompatActivity implements OnPayResultListen
   }
 
   @Override
-  public void onGetPayState(String s) {
-    pay.setText(s);
+  public void onGetPayState(String result) {
+  
+    // Step5: 获取支付结果，根据不同的支付结果状态作不同处理
+    if (TextUtils.equals(result, "SUCCESS")) {
+      //成功，已经收款，交易结束
+    } else if (TextUtils.equals(result, "PAID")) {
+      // 已经付款
+    } else if (TextUtils.equals(result, "PAYING")) {
+      // 正在处理
+    } else if (TextUtils.equals(result, "FAIL")) {
+      // 支付失败
+    }else{
+      // 其他未知错误
+    }
   }
 }
 ```
