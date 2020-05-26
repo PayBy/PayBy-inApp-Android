@@ -8,7 +8,7 @@ PayBy Payment Gateway integration SDK for android with In-app pay scenes
 - IAPSign：通过对IAPDeviceId、IAPPartnerId、IAPAppId、OrderToken拼接而成的签名字符串加密生成。拼接字符串规则如下所示：String signString ="iapAppId="+iapAppId+ "&iapDeviceId=" + iapDeviceId+ "&iapPartnerId=" + iapPartnerId+"&token=" + token ;signString的加密规则可见demo
 ## 添加依赖
 通过配置gradle添加依赖库,同时添加包名占位符,用于操作文件下载路径.
-#### 步骤1:添加maven地址
+#### 步骤1:添加仓库地址
  在Project级别下面的build.gradle中添加maven仓库地址
 ```
 buildscript{
@@ -116,7 +116,7 @@ String mIapDeviceId= manager.getIAPDeviceID();
 manager.onPayResultListener = this;// 当前Activity注册OnPayResultListener接口回调监听
 ```
 #### 步骤4:支付
-根据之前准备的参数构建一个PayTask对象.需要注意的是,参数的顺序必须按照如下所示:第一个为token,第二个为iapDeviceId...然后通过初始化的PbManager对象调用它的pay方法发起支付.第一个参数是PayTask类型,第二个参数是一个Boolean类型,true表示是测试环境,false表示是生产环境.
+根据之前准备的参数构建一个PayTask对象.需要注意的是,参数的顺序必须按照如下所示:第一个参数为token，表示订单token；第二个参数为iapDeviceId，用于区分不同设备的唯一标识；第三个参数iapPartnerId,用于区分不同商户的id；第四个参数为iapSign,表示签名信息，是对token，iapDeviceId,iapPartnerId,iapAppId通过私钥加签之后生成的签名信息；第五个参数是iapAppId,用于区分商户下不同APP的id。然后通过初始化的PbManager对象调用它的pay方法发起支付.第一个参数是PayTask类型,第二个参数是一个Boolean类型,true表示是测试环境,false表示是生产环境.
 ```
 PayTask task = PayTask.with(mToken, mIapDeviceId, mPartnerId, mSign, mIapAppId);
 manager.pay(task, isTest);    
@@ -124,10 +124,10 @@ manager.pay(task, isTest);
 #### 步骤5：获取支付结果
 实现 **OnPayResultListener** 接口，重写它的 **onGetPayState(String result)** 方法，即可以拿到支付结果。
 #### 支付结果码说明
-- SUCCESS: 收款方收款成功，整个支付流程结束
+- SUCCESS: 收款方收款成功，该订单的整个支付流程结束
 - FAIL：支付失败
-- PAID：付款方付款成功
-- PAYING：正在处理中
+- PAID：付款方付款成功。等待收款方收款，同时也可通过接口查询跟踪订单支付状态。
+- PAYING：正在处理中。等待支付流程完成，返回最终支付结果。
 # 示例代码
 以集成AndroidX依赖库为例，完整的支付流程示例代码如下所示:需要注意的是您在实际开发过程中，需要让自己的订单支付界面来实现 **OnPayResultListener** 接口，订单支付界面可以是一个Activity，也可以是一个Fragment。此处以MainActivity作为示例来模拟支付流程.
 ```
@@ -197,9 +197,9 @@ public class MainActivity extends AppCompatActivity implements OnPayResultListen
     if (TextUtils.equals(result, "SUCCESS")) {
       //成功，已经收款，交易结束
     } else if (TextUtils.equals(result, "PAID")) {
-      // 已经付款
+      // 付款方已经成功付款，等待收款方收款。
     } else if (TextUtils.equals(result, "PAYING")) {
-      // 正在处理
+      // 正在处理付款
     } else if (TextUtils.equals(result, "FAIL")) {
       // 支付失败
     }else{
