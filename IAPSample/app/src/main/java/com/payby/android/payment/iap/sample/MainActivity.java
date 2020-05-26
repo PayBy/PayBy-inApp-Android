@@ -1,13 +1,13 @@
 package com.payby.android.payment.iap.sample;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.payby.android.payment.iap.view.x.OnPayResultListener;
 import com.payby.android.payment.iap.view.x.PayTask;
@@ -23,6 +23,7 @@ public class MainActivity extends AppCompatActivity implements OnPayResultListen
   private String mIapDeviceId;
   private String mAppId;
   private boolean isDev = true; //生产环境还是开发环境
+  private String privateKay = "113";  //当前商户的私钥，
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -34,6 +35,8 @@ public class MainActivity extends AppCompatActivity implements OnPayResultListen
     et_id = findViewById(R.id.et_id);
     et_deviceId = findViewById(R.id.et_deviceId);
     et_app_id = findViewById(R.id.et_app_id);
+
+
     //Step1:create PbManager
     manager = PbManager.getInstance(this);
 
@@ -69,12 +72,29 @@ public class MainActivity extends AppCompatActivity implements OnPayResultListen
       Toast.makeText(this, "parameter should not be null", Toast.LENGTH_SHORT).show();
       return;
     }
+
+    // 当前步骤只为模拟根据商户私钥加签，后续加签步骤会放在服务器端
+//    String signString ="iapAppId="+mAppId+ "&iapDeviceId=" + mIapDeviceId+ "&iapPartnerId=" + mPartnerId+"&token=" + mToken ;
+//    String sign = Base64.encode(
+//        RsaUtils.sign(
+//            signString, StandardCharsets.UTF_8, RsaUtils.getPrivateKey(privateKay)));
+
     PayTask task = PayTask.with(mToken, mIapDeviceId, mPartnerId, mSign, mAppId);
     manager.pay(task, isDev);
   }
 
   @Override
-  public void onGetPayState(String s) {
-    pay.setText(s);
+  public void onGetPayState(String result) {
+    if (TextUtils.equals(result, "SUCCESS")) {
+      //成功，已经收款，交易结束
+    } else if (TextUtils.equals(result, "PAID")) {
+      // 已经付款
+    } else if (TextUtils.equals(result, "PAYING")) {
+      // 正在处理
+    } else if (TextUtils.equals(result, "FAIL")) {
+      // 支付失败
+    } else {
+      // 其他未知错误
+    }
   }
 }
