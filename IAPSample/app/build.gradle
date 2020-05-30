@@ -23,6 +23,10 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
+    compileOptions {
+        sourceCompatibility = 1.8
+        targetCompatibility = 1.8
+    }
 
 }
 
@@ -34,6 +38,6 @@ dependencies {
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test.ext:junit:1.1.1'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
-    def iap_version="1.0.0-SNAPSHOT-20200524_11_38"
+    def iap_version="1.0.0-SNAPSHOT-20200530_14_50"
     implementation "com.payby.lego.android.payment:lib-iap-sdk-view-x:${iap_version}"
 }
