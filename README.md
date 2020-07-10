@@ -54,7 +54,7 @@ Add **AndroidX** library dependencies in **build.gradle** below the level of **a
 ```
 dependencies{
     ...
-    def iap_version="1.0.0-RELEASE"
+    def iap_version="1.0.1-RELEASE"
     implementation "com.payby.lego.android.payment:lib-iap-sdk-view-x:${iap_version}"
 }
 ```
@@ -245,8 +245,9 @@ public class MainActivity extends AppCompatActivity implements OnPayResultListen
       Toast.makeText(this, "parameter should not be null", Toast.LENGTH_SHORT).show();
       return;
     }
+    // support DEV/UAT/PRO 
     PayTask task = PayTask.with(mToken, mIapDeviceId, mPartnerId, mSign, mAppId);
-    manager.pay(task, isDev);
+    manager.pay(task, Environment.UAT);  
   }
 
   @Override
