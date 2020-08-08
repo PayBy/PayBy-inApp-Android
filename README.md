@@ -174,20 +174,20 @@ Environment.PRO.
 
 - **Environment.DEV**:the environment for developing and testing
 - **Environent.UAT**:the environment for customer debuging
-- **Environment.PRO88**:the environment for product online 
+- **Environment.PRO**:the environment for product online 
 
 ```
-dev environment
+//dev environment
 PayTask task = PayTask.with(mToken, mIapDeviceId, mPartnerId, mSign, mIapAppId);
 manager.pay(task, Environment.DEV);    
 ```
 ```
-uat environment
+//uat environment
 PayTask task = PayTask.with(mToken, mIapDeviceId, mPartnerId, mSign, mIapAppId);
 manager.pay(task, Environment.UAT);    
 ```
 ```
-product environment online
+//product environment online
 PayTask task = PayTask.with(mToken, mIapDeviceId, mPartnerId, mSign, mIapAppId);
 manager.pay(task, Environment.PRO);    
 ```
