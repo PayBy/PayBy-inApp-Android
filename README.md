@@ -167,12 +167,29 @@ manager.onPayResultListener = this;
 
 #### Step 4: Pay
 
-Construct a **PayTask** object according to the parameters prepared before. It should be noted that the order of the parameters must be as follows: the first parameter is **token**, which represents the order token; the second parameter is **iapDeviceId**, which is used to distinguish the unique identifier of different devices ; The third parameter **iapPartnerId** is used to distinguish the id of different merchants; the fourth parameter is **iapSign**, which represents the signature information, which is the signature information generated after the token, iapDeviceId, iapPartnerId, iapAppId are signed by the private key; the fifth parameter It is **iapAppId**, used to distinguish the id of different apps of the merchant. Then initiate the payment by calling its pay method through the initialized PbManager object. The first parameter is the PayTask type, the second parameter is an Enum type, the value includes Environment.DEV、Environment.UAT and
+Construct a **PayTask** object according to the parameters prepared before. It should be noted that the order of the parameters must be as follows: the first parameter is **token**, which represents the order token; the second parameter is **iapDeviceId**, which is used to distinguish the unique identifier of different devices ; The third parameter **iapPartnerId** is used to distinguish the id of different merchants; the fourth parameter is **iapSign**, which represents the signature information, which is the signature information generated after the token, iapDeviceId, iapPartnerId, iapAppId are signed by the private key; the fifth parameter It is **iapAppId**, used to distinguish the id of different apps of the merchant.
+
+Then initiate the payment by calling its pay method through the initialized PbManager object. The first parameter is the PayTask type, the second parameter is an Enum type, the value includes Environment.DEV、Environment.UAT and
 Environment.PRO.
 
+- **Environment.DEV**:the environment for developing and testing
+- **Environent.UAT**:the environment for customer debuging
+- **Environment.PRO88**:the environment for product online 
+
 ```
+dev environment
 PayTask task = PayTask.with(mToken, mIapDeviceId, mPartnerId, mSign, mIapAppId);
 manager.pay(task, Environment.DEV);    
+```
+```
+uat environment
+PayTask task = PayTask.with(mToken, mIapDeviceId, mPartnerId, mSign, mIapAppId);
+manager.pay(task, Environment.UAT);    
+```
+```
+product environment online
+PayTask task = PayTask.with(mToken, mIapDeviceId, mPartnerId, mSign, mIapAppId);
+manager.pay(task, Environment.PRO);    
 ```
 
 #### Step 5: Get The Payment Result
