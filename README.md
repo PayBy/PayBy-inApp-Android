@@ -132,7 +132,7 @@ Declare the necessary permissions in manifest, including:
 
 # Parameter Preparation
 
-The payment parameter descriptions and methods to get are as follows. The following parameters can be used to construct a **PayTask** object, which describes a payment task, by calling **pay (PayTask task, boolean isTest)** method in **PbManager** to complete payment.
+The payment parameter descriptions and methods to get are as follows. The following parameters can be used to construct a **PayTask** object, which describes a payment task, by calling **pay (PayTask task, Environment env)** method in **PbManager** to complete payment.
 
 | Name         | Descriptioin                                                 | How to get                                                   |
 | ------------ | ------------------------------------------------------------ | ------------------------------------------------------------ |
@@ -167,11 +167,12 @@ manager.onPayResultListener = this;
 
 #### Step 4: Pay
 
-Construct a **PayTask** object according to the parameters prepared before. It should be noted that the order of the parameters must be as follows: the first parameter is **token**, which represents the order token; the second parameter is **iapDeviceId**, which is used to distinguish the unique identifier of different devices ; The third parameter **iapPartnerId** is used to distinguish the id of different merchants; the fourth parameter is **iapSign**, which represents the signature information, which is the signature information generated after the token, iapDeviceId, iapPartnerId, iapAppId are signed by the private key; the fifth parameter It is **iapAppId**, used to distinguish the id of different apps of the merchant. Then initiate the payment by calling its pay method through the initialized PbManager object. The first parameter is the PayTask type, the second parameter is a Boolean type, true means **test environment**, and false means **production environment**.
+Construct a **PayTask** object according to the parameters prepared before. It should be noted that the order of the parameters must be as follows: the first parameter is **token**, which represents the order token; the second parameter is **iapDeviceId**, which is used to distinguish the unique identifier of different devices ; The third parameter **iapPartnerId** is used to distinguish the id of different merchants; the fourth parameter is **iapSign**, which represents the signature information, which is the signature information generated after the token, iapDeviceId, iapPartnerId, iapAppId are signed by the private key; the fifth parameter It is **iapAppId**, used to distinguish the id of different apps of the merchant. Then initiate the payment by calling its pay method through the initialized PbManager object. The first parameter is the PayTask type, the second parameter is an Enum type, the value includes Environment.DEV、Environment.UAT and
+Environment.PRO.
 
 ```
 PayTask task = PayTask.with(mToken, mIapDeviceId, mPartnerId, mSign, mIapAppId);
-manager.pay(task, isTest);    
+manager.pay(task, Environment.DEV);    
 ```
 
 #### Step 5: Get The Payment Result
@@ -199,7 +200,6 @@ public class MainActivity extends AppCompatActivity implements OnPayResultListen
   private String mSign;
   private String mIapDeviceId;
   private String mIapAppId;
-  private boolean isTest = true; 
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
