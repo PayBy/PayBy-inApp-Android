@@ -1,3 +1,4 @@
+
 # PayBy-inApp-Android
 
 PayBy Payment Gateway integration SDK for android with In-app pay scenes
@@ -54,16 +55,16 @@ Add **AndroidX** library dependencies in **build.gradle** below the level of **a
 ```
 dependencies{
     ...
-    def iap_version="1.0.1-RELEASE"
-    implementation "com.payby.lego.android.payment:lib-iap-sdk-view-x:${iap_version}"
+    def iap_version="2.0.1-SNAPSHOT-CST_20201117_13_05"
+    implementation "com.payby.android.module.iap:lib-iap-view:${iap_version}"
 }
 ```
 or **Android Support**
 ```
 dependencies{
     ...
-    def iap_version="1.0.0-RELEASE"
-    implementation "com.payby.lego.android.payment:lib-iap-sdk-view-support:${iap_version}"
+    def iap_version="2.0.1-SNAPSHOT-CST_20201117_13_05"
+    implementation "com.payby.android.module.iap:lib-iap-view:${iap_version}"
 }
 ```
 #### Step 3: Add Placeholder
@@ -264,7 +265,10 @@ public class MainActivity extends AppCompatActivity implements OnPayResultListen
     }
     // support DEV/UAT/PRO 
     PayTask task = PayTask.with(mToken, mIapDeviceId, mPartnerId, mSign, mAppId);
-    manager.pay(task, Environment.UAT);  
+    manager.pay(task, Environment.UAT);
+	//also,you can use the other method to pay
+	//manager.payWithOrderCallback(this);
+	// after calling this method,the loading dialog will not be canceled until gettting the paying app list.you need implement the method onOrder,in the method,you can pass the order information to SDK by successCallback.
   }
 
   @Override
@@ -280,6 +284,68 @@ public class MainActivity extends AppCompatActivity implements OnPayResultListen
       // Payment failed
     }else{
       // Other unknown errors
+    }
+  }
+  
+    @Override
+  public void onGetProtocolState(String protocolState) {
+    //PROTOCOL-SUCCESS,PROTOCOL-FAIL
+    if (TextUtils.equals(protocolState, "PROTOCOL-SUCCESS")) {
+      //success......
+    } else if (TextUtils.equals(protocolState, "PROTOCOL-FAIL")) {
+      //fail.....
+    }
+  }
+
+  @Override
+  public void onOrder(OnOrderSuccessCallback onOrderSuccessCallback, OnOrderFailCallback onOrderFailCallback) {
+  //Tips:if you call method manager.pay(task,environment),do nothing here.	 
+  // if call method manager.payWithOrderCallback(this),you can do the following codes show.
+  // step1:in here,you need get order information by placing order.
+  // step2:construct a PayTask with the order information
+  // step3: if success,pass the order information to sdk with OnOrderSuccessCallback,if fail,just notify SDK the state with OnOrderFailCallback
+ // the following code simulates the process of placeing order and pass the parameter to sdk
+    mToken = et_token.getText().toString().trim();
+    mPartnerId = et_id.getText().toString().trim();
+    mIapDeviceId = et_deviceId.getText().toString().trim();
+    mSign = et_sign.getText().toString().trim();
+    mAppId = et_app_id.getText().toString().trim();
+    if (TextUtils.isEmpty(mToken)
+        || TextUtils.isEmpty(mPartnerId)
+        || TextUtils.isEmpty(mIapDeviceId)
+        || TextUtils.isEmpty(mSign)
+        || TextUtils.isEmpty(mAppId)) {
+      Toast.makeText(this, "parameter should not be null", Toast.LENGTH_SHORT).show();
+      return;
+    }
+
+    // 
+//    String signString ="iapAppId="+mAppId+ "&iapDeviceId=" + mIapDeviceId+ "&iapPartnerId=" + mPartnerId+"&token=" + mToken ;
+//    String sign = Base64.encode(
+//        RsaUtils.sign(
+//            signString, StandardCharsets.UTF_8, RsaUtils.getPrivateKey(privateKay)));
+
+    if (!TextUtils.isEmpty(mToken)) {
+      String signString = "iapAppId=" + mAppId + "&iapDeviceId=" + mIapDeviceId + "&iapPartnerId=" + mPartnerId + "&token=" + mToken;
+
+      String sign = Base64.encode(
+
+          RsaUtils.sign(
+              signString, StandardCharsets.UTF_8, RsaUtils.getPrivateKey(keyDev)));
+      PayTask task = PayTask.with(mToken, mIapDeviceId, mPartnerId, sign, mAppId);
+      new Handler().postDelayed(new Runnable() {
+        @Override
+        public void run() {
+          onOrderSuccessCallback.onSuccess(task, Environment.DEV);
+        }
+      }, 3000);
+    } else {
+      new Handler().postDelayed(new Runnable() {
+        @Override
+        public void run() {
+          onOrderFailCallback.onFail();
+        }
+      }, 4000);
     }
   }
 }
