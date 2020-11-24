@@ -55,7 +55,7 @@ Add **AndroidX** library dependencies in **build.gradle** below the level of **a
 ```
 dependencies{
     ...
-    def iap_version="2.0.1-SNAPSHOT-CST_20201117_16_35"
+    def iap_version="2.0.1-RELEASE"
     implementation "com.payby.android.module.iap:lib-iap-view:${iap_version}"
 }
 ```
@@ -63,7 +63,7 @@ or **Android Support**
 ```
 dependencies{
     ...
-    def iap_version="2.0.1-SNAPSHOT-CST_20201117_16_35"
+    def iap_version="2.0.1-RELEASE"
     implementation "com.payby.android.module.iap:lib-iap-view:${iap_version}"
 }
 ```
