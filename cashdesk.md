@@ -1,6 +1,6 @@
 This document shows how to call the payby cashdesk in third part application,and list all the ways of integration.such as IAP and Deeplink
 ## IAP
-if third part application developer wants to call cashdesk by IAP,the steps can be found in:https://github.com/PayBy/PayBy-inApp-Android
+if third part application developer wants to call cashdesk by IAP,the steps can be found in:https://github.com/PayBy/PayBy-inApp-Android/blob/master/README.md
 
 ## Deeplink 
 The deeplink is also supported to call the payby cashdesk not only int the system application such as SMS,browser,but also int the customer webview of third part application.
