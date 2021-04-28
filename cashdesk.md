@@ -5,7 +5,7 @@ if third part application developer wants to call cashdesk by IAP,the steps can 
 ## Deeplink 
 The deeplink is also supported to call the payby cashdesk not only int the system application such as SMS,browser,but also int the customer webview of third part application.
 
-Now,Payby has supported two deeplinks,one is https://app.payby.com/open-iap-cashdesk,and the other is payby://payment/open-iap-cashdesk。Both of them need four parameters,and they can be found in:https://github.com/PayBy/PayBy-inApp-Android#parameter-preparation.
+Now,Payby has supported two deeplinks,one is https://app.payby.com/open-iap-cashdesk ,and the other is payby://payment/open-iap-cashdesk。Both of them need four parameters,and they can be found in:https://github.com/PayBy/PayBy-inApp-Android#parameter-preparation.
 
 The final deeplink may like as follows:
  
