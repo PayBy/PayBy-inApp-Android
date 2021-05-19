@@ -55,15 +55,15 @@ Add **AndroidX** library dependencies in **build.gradle** below the level of **a
 ```
 dependencies{
     ...
-    def iap_version="2.0.2-RELEASE"
-    implementation "com.payby.android.module.iap:lib-iap-view:${iap_version}"
+    def iap_version="2.0.0-RELEASE"
+    implementation "com.payby.android.module.iap:lib-iap-viewx:${iap_version}"
 }
 ```
 or **Android Support**
 ```
 dependencies{
     ...
-    def iap_version="2.0.1-RELEASE"
+    def iap_version="2.0.3-RELEASE"
     implementation "com.payby.android.module.iap:lib-iap-view:${iap_version}"
 }
 ```
@@ -204,6 +204,10 @@ Implement the **OnPayResultListener** interface and rewrite its **onGetPayState(
 - **PAID**: the payer paid successfully. Wait for the payee to receive the payment, at the same time, you can also query and track the payment status of the order by order NO.
 - **PAYING**: processing. Wait for the payment process to complete and return the final payment result.
 
+# proguard-rules
+-keep class com.payby.android.iap.domain.value**{
+*;
+}
 # Sample
 
 Taking the integration of AndroidX dependency library as an example, the complete payment process sample code is as follows. It should be noted that in the actual development process, you need to make your order payment interface to implement the **OnPayResultListener** interface, the order payment interface can be an Activity or a Fragment. Here MainActivity will be used as an example to simulate the payment process.
