@@ -1,11 +1,11 @@
 
-# PBWebView Bridge集成文档
+# PBWebView Bridge intergration document
 
-## Bridge集成
+## Bridge integration
 
 ```
 window.PBJSBridge.init(function (message, responseCallback) {})
-示例：
+sample:
 window.onload = function () {
       function onBridgeReady() {
         window.PBJSBridge.init(function (message, responseCallback) {})
@@ -21,49 +21,49 @@ window.onload = function () {
 ```
 
 
-## Bridge调用
+## call Bridge
 
 ```
-1、H5调用native
-1.1、native端调用父类的registerHandler即可。如分享：
+1、H5 call native
+1.1、native side registerHandler 。such as bridge share：
 registerHandler(Bridge.share, (data, function) -> {
   ShareParam shareParam = gson.fromJson(data, ShareParam.class);
  share(shareParam);
  
 });
-1.2、H5端：
+1.2、H5 side：
 window.PBJSBridge.invoke('share',
 {
-  text :'我是分享文本'
+  text :'share content'
 },function (data) {
   alert(data)
   const res = JSON.parse(data)
  
 })
-2、native主动推送H5
-2.1、H5端：
+2、native push content to H5
+2.1、H5 side：
 window.PBJSBridge.registerHandler('currentLocation', function(data, responseCallback) {
     alert(data)
     const res = JSON.parse(data)
     console.log("onBluetoothData推送："+data)
  
 })
-2.2、native端：
+2.2、native side：
 invoke(Bridge.location, gson.toJson(map), data -> Log.e(TAG, "onCallBack:" + data));
 ```
 
-## Bridge接口
-### 1.ToPayRequest  拉起收银台
+## Bridge API  list
+### 1.ToPayRequest      open cashdesk
 
 ```
-入参:{
+params:{
 appId: xxx,
 token: xxx
 }
-回调:{
+callback:{
 status: 返回结果状态
 }
-备注:状态码如下
+notes:status code
     支付：
     success: 成功
     failed： 失败
@@ -85,7 +85,7 @@ status: 返回结果状态
     failed:失败
 
 ```
-### 2.leaveWeb 关闭WebView
+### 2.leaveWeb     close webview
 
 ```
 入参：无
@@ -94,52 +94,52 @@ status: 返回结果状态
 ### 3.getPublicConfig 获取公共参数
 
 ```
-入参：无
-回调：{
+params：{}
+callback：{
 X-Device-Id:xxxx,
 }
 ```
-### 4.share 调用系统分享
+### 4.share  system share
 
 ```
-入参：{
+params：{
  text:分享文本内容，包含链接,
   url:图片地址
 }
-返回值：无
+callback：无
 备注:目前暂不支持分享图文、即若分享文本类型，只传text，不需传url。反之一样。
 ```
-### 5.getVerifyToken 授权登录
+### 5.getVerifyToken  login
 
 ```
-入参：{
+params：{
 
 appDomain： xxx,
 
 codeChallenge:xxx
 
 }
-返回值：{
+callback：{
 
 verifyToken: xxx,
 authToken： xxx
 }
 
 ```
-### 6.isUserCGSAccessTokenValid  判断token是否有效
+### 6.isUserCGSAccessTokenValid     if token is valid
 
 ```
-入参：无
-返回值：{
+params:{}
+callback：{
 
 isValid:true/false
 }
 ```
-### 7.requestLocating 获取当前经纬度
+### 7.requestLocating     getCurrentLocation
 
 ```
-入参:无
-返回值:{
+params:{}
+callback:{
 latitude: xxx,
 longitude: xxx,
 isEnable:true/false
@@ -235,10 +235,10 @@ phone:手机号
 }
 返回值：无
 ```
-### 17.requestVerify 请求kyc
+### 17.requestVerify          request kyc
 
 ```
-入参：{
+params：{
 
     "product":"CashNow/PayLater/...",
     "referrerCode":"KYC推荐邀请码",
@@ -246,7 +246,7 @@ phone:手机号
 "fullKyc":true/false,
 
 }
-返回值：{
+callback：{
 verifyFinished:true/false
 }
 备注：
@@ -572,16 +572,18 @@ eventParams：埋点数据的json（key-value）
 目前Bridge使用PBJSBridge,但是对于老的ToPayJSBridge也是兼容的。
 WebView本身自带的API也是支持的，譬如，定位，相机，相册，电话，邮件等。
 
-#### WebView的标题栏控制规则如下：
-###### 是否显示标题栏 
+#### WebView Title：
+###### control title visible 
 
-默认显示标题栏，如果需要不显示，则，由URL query string部分的 pbw_show_title 控制：
-y, true, yes 表示显示标题栏（忽略大小写）
-以上字符串之外的都表示隐藏标题栏 
+native title is visible default，if not, depend on the part of URL query string  pbw_show_title：
+y, true and yes means show native title,otherwise hide native title
 
-##### 标题栏文案
-默认显示当前页面的title
-可以通过URL query string部分的 pbw_title 覆盖，如果有pbw_title，则仅显示pbw_title字段的值
+##### title content
+the title of current page is default.this can be covered by the value of URL query string pbw_title.
+
+the full url shows as following:
+https://www.xxx.com/?pbw_show_title=true&pbw_title=my title.
+
 
  
  
