@@ -52,7 +52,6 @@ allprojects {
 if your project is AndroidX,please add the following code in the **gradle.properties**
 、、、
 android.useAndroidX=true
-# Automatically convert third-party libraries to use AndroidX
 android.enableJetifier=true
 、、、
 
