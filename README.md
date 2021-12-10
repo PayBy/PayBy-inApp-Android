@@ -49,21 +49,27 @@ allprojects {
 ```
 
 #### Step 2: Add Library
+if your project is AndroidX,please add the following code in the **gradle.properties**
+、、、
+android.useAndroidX=true
+# Automatically convert third-party libraries to use AndroidX
+android.enableJetifier=true
+、、、
 
 Add **AndroidX** library dependencies in **build.gradle** below the level of **app module**
 
 ```
 dependencies{
     ...
-    def iap_version="2.0.0-RELEASE"
-    implementation "com.payby.android.module.iap:lib-iap-viewx:${iap_version}"
+    def iap_version="2.0.5-RELEASE"
+    implementation "com.payby.android.module.iap:lib-iap-view:${iap_version}"
 }
 ```
 or **Android Support**
 ```
 dependencies{
     ...
-    def iap_version="2.0.3-RELEASE"
+    def iap_version="2.0.5-RELEASE"
     implementation "com.payby.android.module.iap:lib-iap-view:${iap_version}"
 }
 ```
@@ -130,7 +136,13 @@ Declare the necessary permissions in manifest, including:
 
 </manifest>
 ```
-
+if your project targetVersion is 30,you also need declare the following permission in the manifest.
+、、、
+<uses-permission android:name="android.permission.INTERNET" />
+        <uses-permission
+          android:name="android.permission.QUERY_ALL_PACKAGES"
+          tools:ignore="QueryAllPackagesPermission" />
+、、、
 # Parameter Preparation
 
 The payment parameter descriptions and methods to get are as follows. The following parameters can be used to construct a **PayTask** object, which describes a payment task, by calling **pay (PayTask task, Environment env)** method in **PbManager** to complete payment.
