@@ -51,11 +51,10 @@ allprojects {
 #### Step 2: Add Library
 if your project is AndroidX,please add the following code in the **gradle.properties**
 
-、、、
+```
 android.useAndroidX=true
 android.enableJetifier=true
-、、、
-
+```
 Add **AndroidX** library dependencies in **build.gradle** below the level of **app module**
 
 ```
