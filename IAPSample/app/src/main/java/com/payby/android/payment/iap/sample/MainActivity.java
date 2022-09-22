@@ -3,6 +3,7 @@ package com.payby.android.payment.iap.sample;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -16,6 +17,9 @@ import com.payby.android.iap.view.OnOrderSuccessCallback;
 import com.payby.android.iap.view.OnPayResultListener;
 import com.payby.android.iap.view.PayTask;
 import com.payby.android.iap.view.PbManager;
+import com.payby.android.iap.view.sdk.IAPLanguage;
+import com.payby.android.iap.view.sdk.IAPSDK;
+import com.payby.android.iap.view.sdk.IAPSDKConfig;
 
 import java.nio.charset.StandardCharsets;
 
@@ -24,12 +28,12 @@ public class MainActivity extends AppCompatActivity implements OnPayResultListen
   EditText et_sign, et_token, et_id, et_deviceId, et_app_id;
   Button pay;
   private PbManager manager;
-  private String mToken;  //tokenUrl   
+  private String mToken;  //tokenUrl
   private String mPartnerId;  //partnerId
   private String mSign;
   private String mIapDeviceId;
-  private String mAppId;
-  private String keyDev = "";//当前商户的私钥，
+  private String mIapAppId;
+  private String keyDev = "";//the public key of merchant，
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -42,18 +46,18 @@ public class MainActivity extends AppCompatActivity implements OnPayResultListen
     et_deviceId = findViewById(R.id.et_deviceId);
     et_app_id = findViewById(R.id.et_app_id);
 
-
-    //Step1:create PbManager
+    // Step 1: get PbManager and generate IapDeviceId
     manager = PbManager.getInstance(this);
 
-    //Step2:generate iapDeviceId
-    String iapDeviceID = manager.getIAPDeviceID(this);
+    //Step 2: generate the iapDeviceId
+    String iapDeviceID = manager.getIAPDeviceID();
     et_deviceId.setText(iapDeviceID);
 
-    //Step3:register the payment callback
+    // Step 3: set the payment result listener
     manager.onPayResultListener = this;
 
-    //Step4:start to pay
+    //Step 4(Optional): Customized configuration IAP SDK theme
+    initIAPSDK();
 
     pay.setOnClickListener(new View.OnClickListener() {
       @Override
@@ -64,23 +68,59 @@ public class MainActivity extends AppCompatActivity implements OnPayResultListen
 
   }
 
+  //Step 4(Optional): Customized configuration IAP SDK
+  private void initIAPSDK() {
+    IAPSDKConfig.IAPSDKConfigBuilder builder = new IAPSDKConfig.IAPSDKConfigBuilder();
+    // If showDefaultResultPage is true,show the IAP default result page,else do not show the IAP default page.
+    // The showDefaultResultPage's default value is true
+    builder.showDefaultResultPage = false;
+    // If showQrCodeOnPad is true,the payment method of PayBy/BOTIM/ToTok will showed as QRCode on Pad Devices.
+    // The showQrCodeOnPad's default value is false
+    builder.showQrCodeOnPad = false;
+    // If you want to change the theme color of the IAP, set this primaryColor value(RGB)
+    // The primaryColor's default value is "#00A75D"
+    builder.primaryColor = "#00A75D";
+    // If you want to change the language of IAP,set this language value.(Currently only supported IAPLanguage.AR and IAPLanguage.EN)
+    // The language's default value is IAPLanguage.EN
+    builder.language = IAPLanguage.AR;
+
+    IAPSDK.initialize(getApplicationContext(), builder.build());
+  }
+
+  //Step 5: start to pay
   private void startPay() {
-    //
-    manager.payWithOrderCallback(this);
+    mToken = et_token.getText().toString().trim();
+    mPartnerId = et_id.getText().toString().trim();
+    mIapDeviceId = et_deviceId.getText().toString().trim();
+    mSign = et_sign.getText().toString().trim();
+    mIapAppId = et_app_id.getText().toString().trim();
+    if (TextUtils.isEmpty(mToken)
+        || TextUtils.isEmpty(mPartnerId)
+        || TextUtils.isEmpty(mIapDeviceId)
+        || TextUtils.isEmpty(mSign)
+        || TextUtils.isEmpty(mIapAppId)) {
+      Toast.makeText(this, "parameter should not be null", Toast.LENGTH_SHORT).show();
+      return;
+    }
+    // support DEV/UAT/PRO
+    PayTask task = PayTask.with(mToken, mIapDeviceId, mPartnerId, mSign, mIapAppId);
+    manager.pay(task, Environment.UAT);
+    //also,you can use the other method to pay
+    //manager.payWithOrderCallback(this);
+    // after calling this method,the loading dialog will not be canceled until gettting the paying app list.you need implement the method onOrder,in the method,you can pass the order information to SDK by successCallback.
   }
 
   @Override
   public void onGetPayState(String result) {
+    // Step 5: get the payment result and do different processing according to different payment result status
     if (TextUtils.equals(result, "SUCCESS")) {
-      //成功，已经收款，交易结束
-    } else if (TextUtils.equals(result, "PAID")) {
-      // 已经付款
+      // Successful, the payment has been received, the transaction is over
     } else if (TextUtils.equals(result, "PAYING")) {
-      // 正在处理
+      // The payment is being processed
     } else if (TextUtils.equals(result, "FAIL")) {
-      // 支付失败
+      // Payment failed
     } else {
-      // 其他未知错误
+      // Other unknown errors
     }
   }
 
@@ -96,34 +136,42 @@ public class MainActivity extends AppCompatActivity implements OnPayResultListen
 
   @Override
   public void onOrder(OnOrderSuccessCallback onOrderSuccessCallback, OnOrderFailCallback onOrderFailCallback) {
+    //Tips:if you call method manager.pay(task,environment),do nothing here.
+    // if call method manager.payWithOrderCallback(this),you can do the following codes show.
+    // step1:in here,you need get order information by placing order.
+    // step2:construct a PayTask with the order information
+    // step3: if success,pass the order information to sdk with OnOrderSuccessCallback,if fail,just notify SDK the state with OnOrderFailCallback
+    // the following code simulates the process of placeing order and pass the parameter to sdk
     mToken = et_token.getText().toString().trim();
     mPartnerId = et_id.getText().toString().trim();
     mIapDeviceId = et_deviceId.getText().toString().trim();
     mSign = et_sign.getText().toString().trim();
-    mAppId = et_app_id.getText().toString().trim();
+    mIapAppId = et_app_id.getText().toString().trim();
     if (TextUtils.isEmpty(mToken)
         || TextUtils.isEmpty(mPartnerId)
         || TextUtils.isEmpty(mIapDeviceId)
         || TextUtils.isEmpty(mSign)
-        || TextUtils.isEmpty(mAppId)) {
+        || TextUtils.isEmpty(mIapAppId)) {
       Toast.makeText(this, "parameter should not be null", Toast.LENGTH_SHORT).show();
       return;
     }
 
-    // 当前步骤只为模拟根据商户私钥加签，后续加签步骤会放在服务器端
+    //
 //    String signString ="iapAppId="+mAppId+ "&iapDeviceId=" + mIapDeviceId+ "&iapPartnerId=" + mPartnerId+"&token=" + mToken ;
 //    String sign = Base64.encode(
 //        RsaUtils.sign(
 //            signString, StandardCharsets.UTF_8, RsaUtils.getPrivateKey(privateKay)));
 
     if (!TextUtils.isEmpty(mToken)) {
-      String signString = "iapAppId=" + mAppId + "&iapDeviceId=" + mIapDeviceId + "&iapPartnerId=" + mPartnerId + "&token=" + mToken;
+      String signString =
+          "iapAppId=" + mIapAppId + "&iapDeviceId=" + mIapDeviceId + "&iapPartnerId=" + mPartnerId +
+          "&token=" + mToken;
 
       String sign = Base64.encode(
 
           RsaUtils.sign(
               signString, StandardCharsets.UTF_8, RsaUtils.getPrivateKey(keyDev)));
-      PayTask task = PayTask.with(mToken, mIapDeviceId, mPartnerId, sign, mAppId);
+      PayTask task = PayTask.with(mToken, mIapDeviceId, mPartnerId, sign, mIapAppId);
       new Handler().postDelayed(new Runnable() {
         @Override
         public void run() {
@@ -139,5 +187,5 @@ public class MainActivity extends AppCompatActivity implements OnPayResultListen
       }, 4000);
     }
   }
-
 }
+
