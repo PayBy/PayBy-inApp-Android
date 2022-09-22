@@ -29,7 +29,7 @@ buildscript{
                 username 'dev'
                 password 'dev@123'
             }
-            url("http://nexus.payby.com/repository/android-release/")
+            url("https://nexus.payby.com/repository/android-release/")
         }  
     }
 }
@@ -42,7 +42,7 @@ allprojects {
                 username 'dev'
                 password 'dev@123'
             }
-            url("http://nexus.payby.com/repository/android-release/")
+            url("https://nexus.payby.com/repository/android-release/")
         }  
     }
 }
@@ -60,7 +60,7 @@ Add **AndroidX** library dependencies in **build.gradle** below the level of **a
 ```
 dependencies{
     ...
-    def iap_version="2.0.6-RELEASE"
+    def iap_version="2.0.7-RELEASE"
     implementation "com.payby.android.module.iap:lib-iap-view:${iap_version}"
 }
 ```
@@ -68,7 +68,7 @@ or **Android Support**
 ```
 dependencies{
     ...
-    def iap_version="2.0.6-RELEASE"
+    def iap_version="2.0.7-RELEASE"
     implementation "com.payby.android.module.iap:lib-iap-view:${iap_version}"
 }
 ```
@@ -176,8 +176,30 @@ You should place an order by the server yourself. After that you can get informa
 // register the payment callback listener
 manager.onPayResultListener = this;
 ```
+#### Step 4(Optional): Customized configuration IAP SDK
 
-#### Step 4: Pay
+```
+ //Step 4(Optional): Customized configuration IAP SDK
+  private void initIAPSDK() {
+    IAPSDKConfig.IAPSDKConfigBuilder builder = new IAPSDKConfig.IAPSDKConfigBuilder();
+    // If showDefaultResultPage is true,show the IAP default result page,else do not show the IAP default page.
+    // The showDefaultResultPage's default value is true
+    builder.showDefaultResultPage = false;
+    // If showQrCodeOnPad is true,the payment method of PayBy/BOTIM/ToTok will showed as QRCode on Pad Devices.
+    // The showQrCodeOnPad's default value is false
+    builder.showQrCodeOnPad = false;
+    // If you want to change the theme color of the IAP, set this primaryColor value(RGB)
+    // The primaryColor's default value is "#00A75D"
+    builder.primaryColor = "#00A75D";
+    // If you want to change the language of IAP,set this language value.(Currently only supported IAPLanguage.AR and IAPLanguage.EN)
+    // The language's default value is IAPLanguage.EN
+    builder.language = IAPLanguage.AR;
+    IAPSDK.initialize(getApplicationContext(), builder.build());
+  }
+  
+```
+
+#### Step 5: Pay
 
 Construct a **PayTask** object according to the parameters prepared before. It should be noted that the order of the parameters must be as follows: the first parameter is **token**, which represents the order token; the second parameter is **iapDeviceId**, which is used to distinguish the unique identifier of different devices ; The third parameter **iapPartnerId** is used to distinguish the id of different merchants; the fourth parameter is **iapSign**, which represents the signature information, which is the signature information generated after the token, iapDeviceId, iapPartnerId, iapAppId are signed by the private key; the fifth parameter It is **iapAppId**, used to distinguish the id of different apps of the merchant.
 
@@ -212,7 +234,7 @@ Implement the **OnPayResultListener** interface and rewrite its **onGetPayState(
 
 - **SUCCESS**: the payee has received the payment successfully, and the entire payment process for the order is completed.
 - **FAIL**: payment failed.
-- **PAID**: the payer paid successfully. Wait for the payee to receive the payment, at the same time, you can also query and track the payment status of the order by order NO.
+- ~~PAID~~: ~~the payer paid successfully. Wait for the payee to receive the payment, at the same time, you can also query and track the payment status of the order by order NO.~~
 - **PAYING**: processing. Wait for the payment process to complete and return the final payment result.
 
 # proguard-rules
@@ -225,14 +247,15 @@ Taking the integration of AndroidX dependency library as an example, the complet
 
 ```
 public class MainActivity extends AppCompatActivity implements OnPayResultListener {
-  EditText et_sign, et_token, et_id, et_deviceId,et_app_id;
+  EditText et_sign, et_token, et_id, et_deviceId, et_app_id;
   Button pay;
   private PbManager manager;
-  private String mToken;  //tokenUrl   
+  private String mToken;  //tokenUrl
   private String mPartnerId;  //partnerId
   private String mSign;
   private String mIapDeviceId;
   private String mIapAppId;
+  private String keyDev = "";//the public key of merchant，
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -244,16 +267,20 @@ public class MainActivity extends AppCompatActivity implements OnPayResultListen
     et_id = findViewById(R.id.et_id);
     et_deviceId = findViewById(R.id.et_deviceId);
     et_app_id = findViewById(R.id.et_app_id);
-  
-   // Step 1: get PbManager and generate IapDeviceId
+
+    // Step 1: get PbManager and generate IapDeviceId
     manager = PbManager.getInstance(this);
 
-   //Step 2: generate the iapDeviceId
+    //Step 2: generate the iapDeviceId
     String iapDeviceID = manager.getIAPDeviceID();
     et_deviceId.setText(iapDeviceID);
 
-   // Step 3: set the payment result listener
+    // Step 3: set the payment result listener
     manager.onPayResultListener = this;
+
+    //Step 4(Optional): Customized configuration IAP SDK theme
+    initIAPSDK();
+
     pay.setOnClickListener(new View.OnClickListener() {
       @Override
       public void onClick(View v) {
@@ -262,47 +289,64 @@ public class MainActivity extends AppCompatActivity implements OnPayResultListen
     });
 
   }
- 
-  //Step 4: start to pay
+
+  //Step 4(Optional): Customized configuration IAP SDK
+  private void initIAPSDK() {
+    IAPSDKConfig.IAPSDKConfigBuilder builder = new IAPSDKConfig.IAPSDKConfigBuilder();
+    // If showDefaultResultPage is true,show the IAP default result page,else do not show the IAP default page.
+    // The showDefaultResultPage's default value is true
+    builder.showDefaultResultPage = false;
+    // If showQrCodeOnPad is true,the payment method of PayBy/BOTIM/ToTok will showed as QRCode on Pad Devices.
+    // The showQrCodeOnPad's default value is false
+    builder.showQrCodeOnPad = false;
+    // If you want to change the theme color of the IAP, set this primaryColor value(RGB)
+    // The primaryColor's default value is "#00A75D"
+    builder.primaryColor = "#00A75D";
+    // If you want to change the language of IAP,set this language value.(Currently only supported IAPLanguage.AR and IAPLanguage.EN)
+    // The language's default value is IAPLanguage.EN
+    builder.language = IAPLanguage.AR;
+
+    IAPSDK.initialize(getApplicationContext(), builder.build());
+  }
+
+  //Step 5: start to pay
   private void startPay() {
     mToken = et_token.getText().toString().trim();
     mPartnerId = et_id.getText().toString().trim();
     mIapDeviceId = et_deviceId.getText().toString().trim();
     mSign = et_sign.getText().toString().trim();
-    mAppId = et_app_id.getText().toString().trim();
+    mIapAppId = et_app_id.getText().toString().trim();
     if (TextUtils.isEmpty(mToken)
         || TextUtils.isEmpty(mPartnerId)
         || TextUtils.isEmpty(mIapDeviceId)
         || TextUtils.isEmpty(mSign)
-        || TextUtils.isEmpty(mAppId)) {
+        || TextUtils.isEmpty(mIapAppId)) {
       Toast.makeText(this, "parameter should not be null", Toast.LENGTH_SHORT).show();
       return;
     }
-    // support DEV/UAT/PRO 
-    PayTask task = PayTask.with(mToken, mIapDeviceId, mPartnerId, mSign, mAppId);
+    // support DEV/UAT/PRO
+    PayTask task = PayTask.with(mToken, mIapDeviceId, mPartnerId, mSign, mIapAppId);
     manager.pay(task, Environment.UAT);
-	//also,you can use the other method to pay
-	//manager.payWithOrderCallback(this);
-	// after calling this method,the loading dialog will not be canceled until gettting the paying app list.you need implement the method onOrder,in the method,you can pass the order information to SDK by successCallback.
+    //also,you can use the other method to pay
+    //manager.payWithOrderCallback(this);
+    // after calling this method,the loading dialog will not be canceled until gettting the paying app list.you need implement the method onOrder,in the method,you can pass the order information to SDK by successCallback.
   }
 
   @Override
-  public void onGetPayState(String s) {
-       // Step 5: get the payment result and do different processing according to different payment result status
+  public void onGetPayState(String result) {
+    // Step 5: get the payment result and do different processing according to different payment result status
     if (TextUtils.equals(result, "SUCCESS")) {
       // Successful, the payment has been received, the transaction is over
-    } else if (TextUtils.equals(result, "PAID")) {
-      // The payer has successfully paid and is waiting for the payee to receive the payment
     } else if (TextUtils.equals(result, "PAYING")) {
       // The payment is being processed
     } else if (TextUtils.equals(result, "FAIL")) {
       // Payment failed
-    }else{
+    } else {
       // Other unknown errors
     }
   }
-  
-    @Override
+
+  @Override
   public void onGetProtocolState(String protocolState) {
     //PROTOCOL-SUCCESS,PROTOCOL-FAIL
     if (TextUtils.equals(protocolState, "PROTOCOL-SUCCESS")) {
@@ -314,40 +358,42 @@ public class MainActivity extends AppCompatActivity implements OnPayResultListen
 
   @Override
   public void onOrder(OnOrderSuccessCallback onOrderSuccessCallback, OnOrderFailCallback onOrderFailCallback) {
-  //Tips:if you call method manager.pay(task,environment),do nothing here.	 
-  // if call method manager.payWithOrderCallback(this),you can do the following codes show.
-  // step1:in here,you need get order information by placing order.
-  // step2:construct a PayTask with the order information
-  // step3: if success,pass the order information to sdk with OnOrderSuccessCallback,if fail,just notify SDK the state with OnOrderFailCallback
- // the following code simulates the process of placeing order and pass the parameter to sdk
+    //Tips:if you call method manager.pay(task,environment),do nothing here.
+    // if call method manager.payWithOrderCallback(this),you can do the following codes show.
+    // step1:in here,you need get order information by placing order.
+    // step2:construct a PayTask with the order information
+    // step3: if success,pass the order information to sdk with OnOrderSuccessCallback,if fail,just notify SDK the state with OnOrderFailCallback
+    // the following code simulates the process of placeing order and pass the parameter to sdk
     mToken = et_token.getText().toString().trim();
     mPartnerId = et_id.getText().toString().trim();
     mIapDeviceId = et_deviceId.getText().toString().trim();
     mSign = et_sign.getText().toString().trim();
-    mAppId = et_app_id.getText().toString().trim();
+    mIapAppId = et_app_id.getText().toString().trim();
     if (TextUtils.isEmpty(mToken)
         || TextUtils.isEmpty(mPartnerId)
         || TextUtils.isEmpty(mIapDeviceId)
         || TextUtils.isEmpty(mSign)
-        || TextUtils.isEmpty(mAppId)) {
+        || TextUtils.isEmpty(mIapAppId)) {
       Toast.makeText(this, "parameter should not be null", Toast.LENGTH_SHORT).show();
       return;
     }
 
-    // 
+    //
 //    String signString ="iapAppId="+mAppId+ "&iapDeviceId=" + mIapDeviceId+ "&iapPartnerId=" + mPartnerId+"&token=" + mToken ;
 //    String sign = Base64.encode(
 //        RsaUtils.sign(
 //            signString, StandardCharsets.UTF_8, RsaUtils.getPrivateKey(privateKay)));
 
     if (!TextUtils.isEmpty(mToken)) {
-      String signString = "iapAppId=" + mAppId + "&iapDeviceId=" + mIapDeviceId + "&iapPartnerId=" + mPartnerId + "&token=" + mToken;
+      String signString =
+          "iapAppId=" + mIapAppId + "&iapDeviceId=" + mIapDeviceId + "&iapPartnerId=" + mPartnerId +
+          "&token=" + mToken;
 
       String sign = Base64.encode(
 
           RsaUtils.sign(
               signString, StandardCharsets.UTF_8, RsaUtils.getPrivateKey(keyDev)));
-      PayTask task = PayTask.with(mToken, mIapDeviceId, mPartnerId, sign, mAppId);
+      PayTask task = PayTask.with(mToken, mIapDeviceId, mPartnerId, sign, mIapAppId);
       new Handler().postDelayed(new Runnable() {
         @Override
         public void run() {
@@ -364,4 +410,5 @@ public class MainActivity extends AppCompatActivity implements OnPayResultListen
     }
   }
 }
+
 ```
