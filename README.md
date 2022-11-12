@@ -74,7 +74,7 @@ dependencies{
 ```
 **Notice:**
 The 2.0.9-RELEASE version of the IAP SDK currently does not support flutter applications, and the version that supports flutter is under development.
-If you want to use the IAP SDK in the flutter application, it is recommended to use the 2.0.6.1-RELEASE version.
+If you want to use the IAP SDK in the flutter application, it is recommended to use the 2.0.6.2-RELEASE version.
 
 #### Step 3: Add Placeholder
 
