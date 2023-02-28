@@ -60,7 +60,7 @@ Add **AndroidX** library dependencies in **build.gradle** below the level of **a
 ```
 dependencies{
     ...
-    def iap_version="2.0.9-RELEASE"
+    def iap_version="2.1.0-RELEASE"
     implementation "com.payby.android.module.iap:lib-iap-view:${iap_version}"
 }
 ```
@@ -68,12 +68,12 @@ or **Android Support**
 ```
 dependencies{
     ...
-    def iap_version="2.0.9-RELEASE"
+    def iap_version="2.1.0-RELEASE"
     implementation "com.payby.android.module.iap:lib-iap-view:${iap_version}"
 }
 ```
 **Notice:**
-The 2.0.9-RELEASE version of the IAP SDK currently does not support flutter applications, and the version that supports flutter is under development.
+The 2.1.0-RELEASE version of the IAP SDK currently does not support flutter applications, and the version that supports flutter is under development.
 If you want to use the IAP SDK in the flutter application, it is recommended to use the 2.0.6.2-RELEASE version.
 
 #### Step 3: Add Placeholder
@@ -240,6 +240,7 @@ Implement the **OnPayResultListener** interface and rewrite its **onGetPayState(
 - **FAIL**: payment failed.
 - ~~PAID~~: ~~the payer paid successfully. Wait for the payee to receive the payment, at the same time, you can also query and track the payment status of the order by order NO.~~
 - **PAYING**: processing. Wait for the payment process to complete and return the final payment result.
+- **CANCEL**: payment canceled by user when they presses the cross button on the PayBy popup.(Added on version 2.1.0-RELEASE)
 
 # proguard-rules
 -keep class com.payby.android.iap.domain.value**{
@@ -345,6 +346,8 @@ public class MainActivity extends AppCompatActivity implements OnPayResultListen
       // The payment is being processed
     } else if (TextUtils.equals(result, "FAIL")) {
       // Payment failed
+    } else if (TextUtils.equals(result, "CANCEL")) {
+      // Payment canceled by user when they presses the cross button on the PayBy popup
     } else {
       // Other unknown errors
     }

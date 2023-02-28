@@ -119,6 +119,8 @@ public class MainActivity extends AppCompatActivity implements OnPayResultListen
       // The payment is being processed
     } else if (TextUtils.equals(result, "FAIL")) {
       // Payment failed
+    } else if (TextUtils.equals(result, "CANCEL")) {
+      // Payment canceled by user when they presses the cross button on the PayBy popup
     } else {
       // Other unknown errors
     }
