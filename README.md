@@ -47,6 +47,36 @@ allprojects {
     }
 }
 ```
+If you want to test IAP function in **UAT** environment,please add the following code in the **build.gradle** at the root directory **project**
+
+```
+buildscript{
+    repositories {
+        google()
+        jcenter()
+        maven {
+          credentials {
+              username 'snapshot'
+              password 'snapshot'
+          }
+          url("https://nexus.payby.com/repository/android-snapshot/")
+      } 
+    }
+}
+allprojects {
+    repositories {
+        google()
+        jcenter()
+        maven {
+          credentials {
+              username 'snapshot'
+              password 'snapshot'
+          }
+          url("https://nexus.payby.com/repository/android-snapshot/")
+      }
+    }
+}
+```
 
 #### Step 2: Add Library
 if your project is AndroidX,please add the following code in the **gradle.properties**
@@ -57,6 +87,7 @@ android.enableJetifier=true
 ```
 Add **AndroidX** library dependencies in **build.gradle** below the level of **app module**
 
+For **PRODUCT** environment, you can use this dependency
 ```
 dependencies{
     ...
@@ -70,6 +101,14 @@ dependencies{
     ...
     def iap_version="2.1.0-RELEASE"
     implementation "com.payby.android.module.iap:lib-iap-view:${iap_version}"
+}
+```
+For **UAT** environment, you can use this dependency
+```
+dependencies{
+    ...
+    def iap_version="2.0.9-SNAPSHOT-GST_20250212_14_08"
+    implementation 'com.payby.android.module.iap:lib-iap-view:${iap_version}'
 }
 ```
 **Notice:**
@@ -211,21 +250,21 @@ Then initiate the payment by calling its pay method through the initialized PbMa
 Environment.PRO.
 
 - **Environment.DEV**:the environment for developing and testing
-- **Environent.UAT**:the environment for customer debuging
+- **Environment.UAT**:the environment for customer debugging
 - **Environment.PRO**:the environment for product online 
 
 ```
-//dev environment
+//DEV environment
 PayTask task = PayTask.with(mToken, mIapDeviceId, mPartnerId, mSign, mIapAppId);
 manager.pay(task, Environment.DEV);    
 ```
 ```
-//uat environment
+//UAT environment
 PayTask task = PayTask.with(mToken, mIapDeviceId, mPartnerId, mSign, mIapAppId);
 manager.pay(task, Environment.UAT);    
 ```
 ```
-//product environment online
+//PRODUCT environment online
 PayTask task = PayTask.with(mToken, mIapDeviceId, mPartnerId, mSign, mIapAppId);
 manager.pay(task, Environment.PRO);    
 ```
