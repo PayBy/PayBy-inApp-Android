@@ -59,7 +59,7 @@ buildscript{
               username 'snapshot'
               password 'snapshot'
           }
-          url("https://nexus.payby.com/repository/android-snapshot/")
+          url("https://nexus.payby.com/repository/android-release-payby/")
       } 
     }
 }
@@ -72,7 +72,7 @@ allprojects {
               username 'snapshot'
               password 'snapshot'
           }
-          url("https://nexus.payby.com/repository/android-snapshot/")
+          url("https://nexus.payby.com/repository/android-release-payby/")
       }
     }
 }
