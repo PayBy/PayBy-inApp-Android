@@ -29,7 +29,7 @@ buildscript{
                 username 'dev'
                 password 'dev@123'
             }
-            url("https://nexus.payby.com/repository/android-release/")
+            url("https://nexus.payby.com/repository/android-release-payby/")
         }  
     }
 }
@@ -42,7 +42,7 @@ allprojects {
                 username 'dev'
                 password 'dev@123'
             }
-            url("https://nexus.payby.com/repository/android-release/")
+            url("https://nexus.payby.com/repository/android-release-payby/")
         }  
     }
 }
